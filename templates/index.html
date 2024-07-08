@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Data Analysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://images4.alphacoders.com/693/thumb-1920-693889.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1, h2 {
+            text-align: top;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .form-group label {
+            color: #ecf0f1;
+        }
+        .btn-primary {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .btn-primary:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        .btn-secondary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-secondary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        #dataframe-section {
+            background-color: rgba(0, 0, 0, 0); /* Semi-transparent background for dataframe section */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        table {
+            color: #ecf0f1;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent table background */
+        }
+        table thead th {
+            color: #000000;
+            background-color: rgba(255, 253, 253, 0.9); /* Semi-transparent thead background */
+        }
+        table tbody tr {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent tbody row background */
+        }
+    </style>
+    <script>
+        function toggleDataFrames() {
+            var x = document.getElementById("dataframe-section");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Steam Games Analysis</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data" class="mb-3">
+            <div class="form-group">
+                <label for="file">Upload CSV file</label>
+                <input type="file" class="form-control-file" id="file" name="files[]" multiple required>
+            </div>
+            <div class="form-group">
+                <label for="platform_filter">Choose a Platform below👇</label>
+                <select class="form-control" id="platform_filter" name="platform_filter">
+                    <option value="">All Platforms</option>
+                    <option value="Wii">Wii</option>
+                    <option value="NES">NES</option>
+                    <option value="GB">GB</option>
+                    <option value="DS">DS</option>
+                    <option value="X360">X360</option>
+                    <option value="PS3">PS3</option>
+                    <option value="PS2">PS2</option>    
+                    <option value="SNES">SNES</option>
+                    <option value="GBA">GBA</option>
+                    <option value="3DS">3DS</option>
+                    <option value="PS4">PS4</option>
+                    <option value="N64">N64</option>
+                    <option value="PS">PS</option>
+                    <option value="XB">XB</option>
+                    <option value="PC">PC</option>
+                    <option value="2600">2600</option>
+                    <option value="PSP">PSP</option>
+                    <option value="XOne">XOne</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Initiate</button>
+        </form>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <button onclick="toggleDataFrames()" class="btn btn-secondary mt-3">Show DataFrames</button>
+
+        <div id="dataframe-section" style="display: none;">
+            {% if dataframes_html %}
+            {% for dataframe in dataframes_html %}
+            <h2>{{ dataframe.filename }}</h2>
+            <div>{{ dataframe.table|safe }}</div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        {% if plot_urls %}
+        <h2>Top 5 years games release by genre</h2>
+        {% for plot_url in plot_urls %}
+        <img src="{{ plot_url }}" alt="Plot" class="img-fluid mb-3">
+        {% endfor %}
+        {% endif %}
+
+        {% if summary_plot_url %}
+        <h2 class="mt-5">Summary Statistics</h2>
+        <div class="mt-3">
+            <img src="{{ summary_plot_url }}" class="img-fluid" alt="Summary Statistics">
+        </div>
+        {% endif %}
+
+        {% if insights_table_html %}
+        <h2>Insights</h2>
+        <div>{{ insights_table_html|safe }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
